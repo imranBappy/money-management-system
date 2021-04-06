@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 
@@ -21,11 +21,12 @@ const userSchema = new Schema({
     country: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
-    is18Plus: {
-        type: Boolean,
-        required: true
+    username: {
+        type: String,
+        required: true,
+        trim: true
     },
     balance: Number,
     income: Number,
@@ -34,7 +35,11 @@ const userSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Transaction'
         }]
-    }
+    },
+    date: {
+        type: Date,
+        default: Date.now
+      }
 })
 
 
