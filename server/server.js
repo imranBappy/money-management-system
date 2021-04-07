@@ -4,7 +4,10 @@ require('dotenv').config()
 const morgan = require('morgan')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const userRoute = require('./routes/userRoute')
+const passport = require('passport');
+
+
+
 
 const app = express()
 const { PORT, DB_USER, DB_PASS, DB_NAME } = process.env
@@ -16,9 +19,14 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+app.use(passport.initialize())
+require('./passport')(passport)
 
 // All routes
-app.use(`/api/user`, userRoute)
+app.use(`/api/user`, require('./routes/userRoute'))
+app.use(`/api/transaction`, require('./routes/transactionRoute'))
+
+
 app.get('/', (req, res) =>
 {
     res.send('Server is running')

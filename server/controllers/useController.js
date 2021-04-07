@@ -37,14 +37,23 @@ exports.registerPostController = async (req, res, next) =>
                 User.findOne({username}).then( user =>{
                     if (user) if (user) return resourceError(res, 'username already exist')
                 }).catch((err) => serverError(res, err))
-
-
+                
                 bcrypt.hash(password, 11, (err, hash) =>
                 {
                     if (err) {
                         return serverError(res, err)
                     }
-                    let user = new User({ name,username, country, email, password: hash })
+                    let user = new User({ 
+                        name,
+                        username, 
+                        country, 
+                        email, 
+                        password: hash,
+                        transaction:[],
+                        amount: 0,
+                        income:0,
+                        expense:0
+                     })
                     user.save()
                         .then((user) =>
                         {
@@ -63,7 +72,6 @@ exports.registerPostController = async (req, res, next) =>
 
 exports.loginPostController = async (req, res, next) =>
 {
-
     const { username, password } = req.body
     await User.findOne({ username })
         .then((user) =>
@@ -78,16 +86,18 @@ exports.loginPostController = async (req, res, next) =>
                         _id: user._id,
                         name: user.name,
                         email: user.email,
-                        isAuthenticated: true
+                        isAuthenticated: true,
+                        amount: user.amount,
+                        income: user.income,
+                        expense: user.expense,
+                        transaction: user.transaction
                     }, 'SECRET', { expiresIn: '2h' })
                     
-                   
                     res.status(200).json({
                         message: 'Login successful',
                         token: `Bearer ${token}`
                     })
                 }
-
             })
         })
         .catch((err) => serverError(res, err))
